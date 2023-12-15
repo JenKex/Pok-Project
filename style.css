@@ -83,11 +83,24 @@ body{
     border: 2px solid gray;
   }
 
-  div > p{
+  #list > div > div{
+    display: flex;
+    flex-direction: column;
     border-radius: 2em;
     min-width: 49%;
     border: 2px solid gray;
     margin: 0;
+  }
+
+  #list > div > div > p{
+    margin: auto;
+    font-family: Fira Sans;
+  }
+
+  #list > div > div > button{
+    height: 20%;
+    width: 60%;
+    margin: auto;
   }
 
   /* #team-container > * {
@@ -116,14 +129,35 @@ body{
     border: solid 2px rgb(144, 143, 143);
   }
   #reserve-list > div{
-    min-width: 30vw;
-    min-height: 30vh;
+    display: flex;
+    min-width: 80vw;
+    min-height: 35vh;
     margin-top: 1em;
     margin-left: 1em;
     margin-right: 1em;
     margin-bottom: 1em;
     border-radius: 2em;
     border: solid 2px rgb(144, 143, 143);
+  }
+
+  #reserve-list > div > div{
+    display: flex;
+    flex-direction: column;
+    border-radius: 2em;
+    min-width: 49%;
+    border: 2px solid gray;
+    margin: 0;
+  }
+
+  #reserve-list > div > div > p{
+    margin: auto;
+    font-family: Fira Sans;
+  }
+
+  #reserve-list > div > div > button{
+    height: 20%;
+    width: 60%;
+    margin: auto;
   }
 
   .hidden{
@@ -146,7 +180,7 @@ body{
       margin-top: 2em;
       border-radius: 2em;
       width: 60vw;
-      height: 60vh;
+      min-height: 20vh;
       background-color: #b5e39f;
       border: solid 2px rgb(144, 143, 143);
     }
@@ -182,8 +216,8 @@ body{
       margin: auto;
       margin-top: 2em;
       border-radius: 2em;
-      width: 60em;
-      height: 30em;
+      width: 60vw;
+      min-height: 20vh;
       background-color: #b5e39f;
       border: solid 2px rgb(144, 143, 143);
     }
