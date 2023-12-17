@@ -16,6 +16,41 @@ let teamContainer3 = document.querySelector(".member-container:last-child")
 let teamMember1 = ''
 let teamMember2 = ''
 let teamMember3 = ''
+let pokemonList = []
+
+// Start på API-kallning och localStorage-sättning. Måste fixa 'object Object' problemet (har inte strängifierat rätt)
+// och kolla mot om information redan lagrats.
+
+// if (localStorage.getItem("pokemonobjectlist") === null){
+  const api = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=1017')
+  const objectlist = await api.json()
+  console.log(objectlist)
+  // objectliststring = JSON.stringify(objectlist)
+  // localStorage.setItem("pokemonobjectlist", objectliststring)
+// }
+// else{
+
+// }
+// objectlist.stringify
+// localStorage.setItem(objectlist)
+// localStorage.getItem(object)
+
+for (let i = 0; i < 10; i++){
+  console.log(objectlist.results[i].name)
+  let url = objectlist.results[i].url
+  const response = await fetch(url)
+  const data = await response.json()
+
+  //Och möjligen göra en ny localstorage-lista att kolla mot, där relevant information cacheas? Detta är inte färdigt men känns som en bra start.
+  //Och om jag gör LocalStorage av denna begränsade lista, behöver jag lagra/cachea den ursprungliga listan med data alls?
+  let pokemon = {}
+  pokemon.name = data.species.name
+  pokemon.sprite = data.sprites.front_default
+  pokemon.ability = data.abilities[0].ability.name
+  console.log(pokemon)
+  pokemonList.push(pokemon)
+  console.log(pokemonList)
+}
 
 tabHeaders.forEach(function (tabHeader) {
   tabHeader.addEventListener("click", function () {
