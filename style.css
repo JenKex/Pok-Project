@@ -29,16 +29,11 @@ body{
     border-bottom: none;
   }
 
-  input{
+  #tab-content-1 > input{
     margin-left: 45vw;
     margin-top: 1em;
     margin-bottom: 1em;
     border-radius: 0.1em;
-  }
-
-  label{
-    margin-left: 0.5em;
-    font-family: Fira Sans;
   }
 
   #list{
@@ -50,6 +45,10 @@ body{
     background-color: #b5e39f;
     border: solid 2px rgb(144, 143, 143);
   }
+
+  /* Anteckning -- i bredskärmsvy ser listan helt okej, och kanske till och med bättre, ut om hela #list > div kommenteras ut.
+  I mobilvy går grid-mönstret ibland sönder av bilder som är större eller mindre.*/
+
   #list > div{
     display: flex;
     min-width: 80vw;
@@ -65,22 +64,40 @@ body{
   #team-container{
     display: flex;
     flex-direction: column;
-    width: 60vw;
-    height: 60vh;
-    margin: auto;
     border-radius: 2em;
     background-color: #b5e39f;
     border: solid 2px rgb(144, 143, 143);
   }
 
   .member-container{
-    display: flex;
+    margin: auto;
+  }
+
+  #team-container > h3{
+    grid-column: span 3;
+    justify-self: center;
+    font-family: Fira Sans;
+  }
+
+  h2{
+    font-family: Fira Sans;
   }
 
   div > img{
     border-radius: 2em;
     min-width: 49%;
     border: 2px solid gray;
+  }
+
+  .buttons{
+    display: flex;
+    justify-content: center;
+    margin-top: 1em;
+  }
+
+  .buttons > button{
+    width: 4em;
+    height: 2em;
   }
 
   #list > div > div{
@@ -193,8 +210,9 @@ body{
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(3, 1fr);
-      width: 600px;
-      height: 400px;
+      width: 50vw;
+      min-height: 300px;
+      height: 50vh;
       margin: auto;
       border-radius: 2em;
       background-color: #b5e39f;
