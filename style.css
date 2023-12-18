@@ -38,8 +38,8 @@ body{
   }
 
   #list{
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     margin: auto;
     margin-top: 2em;
     border-radius: 2em;
@@ -52,8 +52,6 @@ body{
 
   #list > div{
     display: flex;
-    min-width: 80vw;
-    min-height: 35vh;
     margin-top: 1em;
     margin-left: 1em;
     margin-right: 1em;
@@ -191,15 +189,7 @@ body{
     display: none;
   }
 
-  @media screen and (min-width: 650px){
-    #list > div{
-      min-width: 40vw;
-      min-height: 45vh;
-      max-width: 80vw;
-  }
-}
-
-  @media screen and (min-width: 950px) {
+  @media screen and (min-width: 800px) {
     #list{
       display: grid;
       grid-template-columns: repeat(3, 1fr);
