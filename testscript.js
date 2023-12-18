@@ -17,40 +17,58 @@ let teamMember1 = ''
 let teamMember2 = ''
 let teamMember3 = ''
 let pokemonList = []
+let datalist = localStorage.getItem("pokemonStorageList")
+datalist = JSON.parse(datalist)
+console.log(datalist)
 
 // Start på API-kallning och localStorage-sättning. Måste fixa 'object Object' problemet (har inte strängifierat rätt)
 // och kolla mot om information redan lagrats.
 
-// if (localStorage.getItem("pokemonobjectlist") === null){
+async function getPokemon(){
+  if (localStorage.getItem("pokemonobjectlist") === null){
   const api = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=1017')
   const objectlist = await api.json()
   console.log(objectlist)
-  // objectliststring = JSON.stringify(objectlist)
-  // localStorage.setItem("pokemonobjectlist", objectliststring)
-// }
-// else{
-
-// }
+  let objectliststring = JSON.stringify(objectlist)
+  localStorage.setItem("pokemonobjectlist", objectliststring)
+  }
+  else{
+  }
+}
+getPokemon()
 // objectlist.stringify
 // localStorage.setItem(objectlist)
 // localStorage.getItem(object)
 
-for (let i = 0; i < 10; i++){
-  console.log(objectlist.results[i].name)
-  let url = objectlist.results[i].url
-  const response = await fetch(url)
-  const data = await response.json()
 
-  //Och möjligen göra en ny localstorage-lista att kolla mot, där relevant information cacheas? Detta är inte färdigt men känns som en bra start.
-  //Och om jag gör LocalStorage av denna begränsade lista, behöver jag lagra/cachea den ursprungliga listan med data alls?
-  let pokemon = {}
-  pokemon.name = data.species.name
-  pokemon.sprite = data.sprites.front_default
-  pokemon.ability = data.abilities[0].ability.name
-  console.log(pokemon)
-  pokemonList.push(pokemon)
-  console.log(pokemonList)
+async function makeTraitList(){
+  if (localStorage.getItem("pokemonStorageList") === null){
+    let objectlist = localStorage.getItem("pokemonobjectlist")
+    objectlist = JSON.parse(objectlist)
+    console.log(objectlist)
+    for (let i = 0; i < objectlist.length; i++){
+      console.log(objectlist.results[i].name)
+      let url = objectlist.results[i].url
+      const response = await fetch(url)
+      const data = await response.json()
+      //Och möjligen göra en ny localstorage-lista att kolla mot, där relevant information cacheas? Detta är inte färdigt men känns som en bra start.
+      //Och om jag gör LocalStorage av denna begränsade lista, behöver jag lagra/cachea den ursprungliga listan med data alls?
+      let pokemon = {}
+      pokemon.name = data.species.name
+      pokemon.sprite = data.sprites.front_default
+      pokemon.ability = data.abilities[0].ability.name
+      console.log(pokemon)
+      pokemonList.push(pokemon)
+      console.log(pokemonList)
+      if (i === (objectlist.length - 1)){
+        let pokemonStorageList = JSON.stringify(pokemonList)
+        localStorage.setItem("pokemonStorageList", pokemonStorageList)
+      }
+    }
+  }
 }
+
+makeTraitList()
 
 tabHeaders.forEach(function (tabHeader) {
   tabHeader.addEventListener("click", function () {
@@ -101,21 +119,16 @@ function tabMyTeam() {
 
 searchField.addEventListener('keyup', async () => {
   clearSearch()
-  for (let i = 0; i < sample.results.length; i++) {
+  for (let i = 0; i < datalist.length; i++) {
     if (searchField.value === '') {
       clearSearch()
     }
     else
-      if (sample.results[i].name.toUpperCase().includes(searchField.value.toUpperCase())) {
-        console.log(sample.results[i].name)
-        let url = sample.results[i].url
-        const response = await fetch(url)
-        const data = await response.json()
-        console.log(data)
+      if (datalist[i].name.toUpperCase().includes(searchField.value.toUpperCase())) {
         let listItem = document.createElement('div')
         searchResultList.appendChild(listItem)
         let listItemImage = document.createElement('img')
-        listItemImage.src = data.sprites.front_default
+        listItemImage.src = datalist[i].sprite
         let listItemInfoContainer = document.createElement('div')
         let listItemText = document.createElement('p')
         let listItemAddButton = document.createElement('button')
@@ -123,23 +136,29 @@ searchField.addEventListener('keyup', async () => {
         // läggs till kommer ItemImage och ItemText hänvisa till samma bild som skapades jämte den(?; fick förklaring om detta, men är inte
         // helt hundra på att det funkar när flera olika listItems existerar på sajten. Men om man lagrar det i en ny variabel i funktionen,
         // t.ex. thisImage = listItemImage? Och om det funkar borde det vara synonymt?
-        console.log('sample results', sample?.results[i])
-        listItemText.innerText = data.species.name[0].toUpperCase() + data.species.name.slice(1) //Vill gärna göra en .includes('-'),
+        if (datalist[i].name.includes('-')){
+          let splitname = datalist[i].name.split('-')
+          console.log(splitname)
+          listItemText.innerText = splitname[0][0].toUpperCase() + splitname[0].slice(1) + '-' + splitname[1][0].toUpperCase() + splitname[1].slice(1)
+        }
+        else{
+        listItemText.innerText = datalist[i].name[0].toUpperCase() + datalist[i].name.slice(1) //Vill gärna göra en .includes('-'),
         //splitta vid bindestreck och versalera igen på namn med bindestreck.
-        console.log(listItemText.innerText)
+        }
         listItemAddButton.addEventListener('click', () => {
           listItemImage.remove()
           listItemInfoContainer.remove()
+          listItem.classList.add('nicknameprompt')
           let nicknamePrompt = document.createElement('p')
           nicknamePrompt.innerText = 'Would you like to add a nickname?'
+          let listButtonContainer = document.createElement('div')
           let yesButton = document.createElement('button')
           let noButton = document.createElement('button')
           yesButton.innerText = 'Yes'
           noButton.innerText = 'No'
           yesButton.addEventListener('click', () => {
             nicknamePrompt.remove()
-            yesButton.remove()
-            noButton.remove()
+            listButtonContainer.remove()
             let nicknameInput = document.createElement('input')
             let confirmButton = document.createElement('button')
             confirmButton.innerText = 'Confirm'
@@ -235,14 +254,15 @@ searchField.addEventListener('keyup', async () => {
                 reserveListItemInfoContainer.appendChild(reserveListItemText)
                 reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
               }
+              listItem.classList.remove('nicknameprompt')
             })
             listItem.appendChild(nicknameInput)
             listItem.appendChild(confirmButton)
           })
           noButton.addEventListener('click', () => {
+            listItem.classList.remove('nicknameprompt')
             nicknamePrompt.remove()
-            yesButton.remove()
-            noButton.remove()
+            listButtonContainer.remove()
             listItem.appendChild(listItemImage)
             listItem.appendChild(listItemInfoContainer)
             listItemInfoContainer.appendChild(listItemText)
@@ -326,8 +346,9 @@ searchField.addEventListener('keyup', async () => {
             }
           })
           listItem.appendChild(nicknamePrompt)
-          listItem.appendChild(yesButton)
-          listItem.appendChild(noButton)
+          listItem.appendChild(listButtonContainer)
+          listButtonContainer.appendChild(yesButton)
+          listButtonContainer.appendChild(noButton)
           console.log(teamMember1)
           console.log(teamMember2)
           console.log(teamMember3)
