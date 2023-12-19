@@ -30,8 +30,14 @@ body{
     border-bottom: none;
   }
 
+  #tab-content-1{
+    display: flex;
+    flex-direction: column;
+  }
+
   #tab-content-1 > input{
-    margin-left: 45vw;
+    margin: auto;
+    width: 10em;
     margin-top: 1em;
     margin-bottom: 1em;
     border-radius: 0.1em;
@@ -39,12 +45,14 @@ body{
 
   #list{
     display: grid;
+    width: 60vw;
+    min-height: 20vh;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     margin: auto;
     margin-top: 2em;
     border-radius: 2em;
     background-color: #b5e39f;
-    border: solid 2px rgb(144, 143, 143);
+    border: solid 2px rgb(45, 132, 45);
   }
 
   /* Anteckning -- i bredskärmsvy ser listan helt okej, och kanske till och med bättre, ut om hela #list > div kommenteras ut.
@@ -57,7 +65,7 @@ body{
     margin-right: 1em;
     margin-bottom: 1em;
     border-radius: 2em;
-    border: solid 2px rgb(144, 143, 143);
+    border: solid 2px rgb(45, 132, 45);
   }
   
   #team-container{
@@ -65,16 +73,19 @@ body{
     flex-direction: column;
     border-radius: 2em;
     background-color: #b5e39f;
-    border: solid 2px rgb(144, 143, 143);
+    border: solid 2px rgb(45, 132, 45);
   }
 
   .member-container{
     margin: auto;
+    margin-top: 1em;
+    margin-bottom: 2em;
   }
 
   #team-container > h3{
     grid-column: span 3;
     justify-self: center;
+    margin: auto;
     font-family: Fira Sans;
   }
 
@@ -86,7 +97,6 @@ body{
   div > img{
     border-radius: 2em;
     min-width: 49%;
-    border: 2px solid gray;
   }
 
   .buttons{
@@ -105,7 +115,6 @@ body{
     flex-direction: column;
     border-radius: 2em;
     min-width: 49%;
-    border: 2px solid gray;
     margin: 0;
   }
 
@@ -128,6 +137,16 @@ body{
     flex-direction: row;
   }
 
+  #list > .nicknameprompt > input{
+    margin: auto;
+    width: 50%;
+  }
+
+  #list > .nicknameprompt > button{
+    margin: auto;
+    width: 30%;
+  }
+
   /* #team-container > * {
     width: 5em;
     border: 2px dotted red;
@@ -145,24 +164,24 @@ body{
   } */
 
   #reserve-list{
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    width: 60vw;
+    min-height: 20vh;
     margin: auto;
     margin-top: 2em;
     border-radius: 2em;
     background-color: #b5e39f;
-    border: solid 2px rgb(144, 143, 143);
+    border: solid 2px rgb(45, 132, 45);
   }
   #reserve-list > div{
     display: flex;
-    min-width: 80vw;
-    min-height: 35vh;
     margin-top: 1em;
     margin-left: 1em;
     margin-right: 1em;
     margin-bottom: 1em;
     border-radius: 2em;
-    border: solid 2px rgb(144, 143, 143);
+    border: solid 2px rgb(45, 132, 45);
   }
 
   #reserve-list > div > div{
@@ -170,7 +189,6 @@ body{
     flex-direction: column;
     border-radius: 2em;
     min-width: 49%;
-    border: 2px solid gray;
     margin: 0;
   }
 
@@ -185,6 +203,10 @@ body{
     margin: auto;
   }
 
+  #tab-content-1.hidden{
+    display: none;
+  }
+
   .hidden{
     display: none;
   }
@@ -196,10 +218,7 @@ body{
       margin: auto;
       margin-top: 2em;
       border-radius: 2em;
-      width: 60vw;
-      min-height: 20vh;
       background-color: #b5e39f;
-      border: solid 2px rgb(144, 143, 143);
     }
     #list > div{
       min-width: 0;
@@ -216,7 +235,6 @@ body{
       margin: auto;
       border-radius: 2em;
       background-color: #b5e39f;
-      border: solid 2px rgb(144, 143, 143);
     }
 
     .member-container{
@@ -234,10 +252,7 @@ body{
       margin: auto;
       margin-top: 2em;
       border-radius: 2em;
-      width: 60vw;
-      min-height: 20vh;
       background-color: #b5e39f;
-      border: solid 2px rgb(144, 143, 143);
     }
     #reserve-list > div{
       min-width: 0;
