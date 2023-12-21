@@ -1,4 +1,4 @@
-import { sample, details } from "./pokemonSample.js"
+getPokemon()
 
 let tabHeaders = document.querySelectorAll(".tab-header")
 let tabHeader1 = document.querySelector("#tab-header-1")
@@ -17,36 +17,31 @@ let teamMember1 = ''
 let teamMember2 = ''
 let teamMember3 = ''
 let pokemonList = []
-let datalist = localStorage.getItem("pokemonStorageList")
-datalist = JSON.parse(datalist)
-console.log(datalist)
 
 // Start på API-kallning och localStorage-sättning. Måste fixa 'object Object' problemet (har inte strängifierat rätt)
 // och kolla mot om information redan lagrats.
 
-async function getPokemon(){
-  if (localStorage.getItem("pokemonobjectlist") === null){
-  const api = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=1017')
-  const objectlist = await api.json()
-  console.log(objectlist)
-  let objectliststring = JSON.stringify(objectlist)
-  localStorage.setItem("pokemonobjectlist", objectliststring)
-  }
-  else{
+async function getPokemon() {
+  if (localStorage.getItem("pokemonobjectlist") === null) {
+    const api = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=1017')
+    const objectlist = await api.json()
+    console.log(objectlist)
+    let objectliststring = JSON.stringify(objectlist)
+    localStorage.setItem("pokemonobjectlist", objectliststring)
+    makeTraitList()
   }
 }
-getPokemon()
 // objectlist.stringify
 // localStorage.setItem(objectlist)
 // localStorage.getItem(object)
 
 
-async function makeTraitList(){
-  if (localStorage.getItem("pokemonStorageList") === null){
+async function makeTraitList() {
+  if (localStorage.getItem("pokemonStorageList") === null) {
     let objectlist = localStorage.getItem("pokemonobjectlist")
     objectlist = JSON.parse(objectlist)
     console.log(objectlist)
-    for (let i = 0; i < objectlist.length; i++){
+    for (let i = 0; i < 1017; i++) {
       console.log(objectlist.results[i].name)
       let url = objectlist.results[i].url
       const response = await fetch(url)
@@ -56,11 +51,14 @@ async function makeTraitList(){
       let pokemon = {}
       pokemon.name = data.species.name
       pokemon.sprite = data.sprites.front_default
-      pokemon.ability = data.abilities[0].ability.name
+      pokemon.abilities = []
+      for (let i = 0; i < data.abilities.length; i++) {
+        pokemon.abilities[i] = data.abilities[i].ability.name
+      }
       console.log(pokemon)
       pokemonList.push(pokemon)
       console.log(pokemonList)
-      if (i === (objectlist.length - 1)){
+      if (i === 1016) {
         let pokemonStorageList = JSON.stringify(pokemonList)
         localStorage.setItem("pokemonStorageList", pokemonStorageList)
       }
@@ -68,7 +66,19 @@ async function makeTraitList(){
   }
 }
 
-makeTraitList()
+// async function testEkans(){
+//   const response = await fetch('https://pokeapi.co/api/v2/pokemon/24/')
+//   const data = await response.json()
+//   console.log(data.name)
+//   console.log(data.abilities)
+//   let pokemon = {name: 'ekans'}
+//   pokemon.abilities = []
+//   for (let i = 0; i < data.abilities.length; i++){
+//     pokemon.abilities[i] = data.abilities[i].ability.name
+//   }
+//   console.log(pokemon)
+// }
+// testEkans()
 
 tabHeaders.forEach(function (tabHeader) {
   tabHeader.addEventListener("click", function () {
@@ -101,6 +111,35 @@ function tabMyTeam() {
   checkTeamComplete()
 }
 
+// Ursprunglig moveButton-funktion -- ersatte hela elementet via insertBefore.
+// Problem: Knapparna raderas/skapades inte om, så om man valde move back på första Pokémonen så hängde bara den knappen med,
+// och monen som flyttades uppåt hade en Move Forward-knapp som inte gjorde någonting. 
+
+// function moveButton(buttonContainer2){
+//   let card = buttonContainer2.parentElement
+//   console.log(card.parentElement)
+//   let buttonForward = document.createElement('button')
+//   buttonForward.innerText = 'Move Forward'
+//   buttonForward.addEventListener('click', () =>{
+//     teamContainer.insertBefore(card, card.previousSibling)
+//   })
+//   let buttonBack = document.createElement('button')
+//   buttonBack.addEventListener('click', () =>{
+//     teamContainer.insertBefore(card, card.nextSibling.nextSibling)
+//   })
+//   buttonBack.innerText = 'Move Back'
+//   if (card === teamContainer1){
+//   buttonContainer2.appendChild(buttonBack)
+//   }
+//   else if (card === teamContainer2){
+//     buttonContainer2.appendChild(buttonForward)
+//     buttonContainer2.appendChild(buttonBack)
+//   }
+//   else{
+//     buttonContainer2.appendChild(buttonForward)
+//   }
+// }
+
 //Det känns som att jag har fått fler problem med dubletter?
 //Måste implementera dublett-protection, är alldeles för bängligt annars om man skriver snabbt
 //Gör också ett alfabet och verifiera att keyup-value matchar alfabetet, blir annars så att listan refreshar vid shift, ctrl, etc
@@ -118,208 +157,210 @@ function tabMyTeam() {
 //sök på 'omanyte' -- dra ut relevanta variabler från objektlista?
 
 searchField.addEventListener('keyup', async () => {
+  let datalist = localStorage.getItem("pokemonStorageList")
+  datalist = JSON.parse(datalist)
   clearSearch()
   for (let i = 0; i < datalist.length; i++) {
     if (searchField.value === '') {
       clearSearch()
     }
     else
-      if (datalist[i].name.toUpperCase().includes(searchField.value.toUpperCase())) {
-        let listItem = document.createElement('div')
-        searchResultList.appendChild(listItem)
-        let listItemImage = document.createElement('img')
-        listItemImage.src = datalist[i].sprite
-        let listItemInfoContainer = document.createElement('div')
-        let listItemText = document.createElement('p')
-        let listItemAddButton = document.createElement('button')
-        // Skapa en funktion som lägger till en eventlistener på en button, och eftersom event-listenern läggs till i samma skedet som knappen
-        // läggs till kommer ItemImage och ItemText hänvisa till samma bild som skapades jämte den(?); fick förklaring om detta, men är inte
-        // helt hundra på att det funkar när flera olika listItems existerar på sajten. Men om man lagrar det i en ny variabel i funktionen,
-        // t.ex. thisImage = listItemImage? Och om det funkar borde det vara synonymt?
-        if (datalist[i].name.includes('-')){
-          let splitname = datalist[i].name.split('-')
-          console.log(splitname)
-          listItemText.innerText = splitname[0][0].toUpperCase() + splitname[0].slice(1) + '-' + splitname[1][0].toUpperCase() + splitname[1].slice(1)
-        }
-        else{
+    if (datalist[i].name.toUpperCase().includes(searchField.value.toUpperCase())) {
+      let listItem = document.createElement('div')
+      searchResultList.appendChild(listItem)
+      let listItemImage = document.createElement('img')
+      listItemImage.src = datalist[i].sprite
+      let listItemInfoContainer = document.createElement('div')
+      let listItemText = document.createElement('p')
+      let listItemAddButton = document.createElement('button')
+      // Skapa en funktion som lägger till en eventlistener på en button, och eftersom event-listenern läggs till i samma skedet som knappen
+      // läggs till kommer ItemImage och ItemText hänvisa till samma bild som skapades jämte den(?); fick förklaring om detta, men är inte
+      // helt hundra på att det funkar när flera olika listItems existerar på sajten. Men om man lagrar det i en ny variabel i funktionen,
+      // t.ex. thisImage = listItemImage? Och om det funkar borde det vara synonymt?
+      if (datalist[i].name.includes('-')) {
+        let splitname = datalist[i].name.split('-')
+        console.log(splitname)
+        listItemText.innerText = splitname[0][0].toUpperCase() + splitname[0].slice(1) + '-' + splitname[1][0].toUpperCase() + splitname[1].slice(1)
+      }
+      else {
         listItemText.innerText = datalist[i].name[0].toUpperCase() + datalist[i].name.slice(1) //Vill gärna göra en .includes('-'),
         //splitta vid bindestreck och versalera igen på namn med bindestreck.
-        }
-        listItemAddButton.addEventListener('click', () => {
-          listItemImage.remove()
-          listItemInfoContainer.remove()
-          listItem.classList.add('nicknameprompt')
-          let nicknamePrompt = document.createElement('p')
-          nicknamePrompt.innerText = 'Would you like to add a nickname?'
-          let listButtonContainer = document.createElement('div')
-          let yesButton = document.createElement('button')
-          let noButton = document.createElement('button')
-          yesButton.innerText = 'Yes'
-          noButton.innerText = 'No'
-          yesButton.addEventListener('click', () => {
-            nicknamePrompt.remove()
-            listButtonContainer.remove()
-            let nicknameInput = document.createElement('input')
-            let confirmButton = document.createElement('button')
-            confirmButton.innerText = 'Confirm'
-            confirmButton.addEventListener('click', () => {
-              nicknameInput.remove()
-              confirmButton.remove()
-              if (teamMember1 === '') {
-                teamMember1 = listItemText.innerText
-                listItem.appendChild(listItemImage)
-                listItem.appendChild(listItemInfoContainer)
-                listItemInfoContainer.appendChild(listItemText)
-                listItemInfoContainer.appendChild(listItemAddButton)
-                let nickname = teamContainer1.querySelector('.poke-name')
-                nickname.innerText = nicknameInput.value
-                let memberImage = teamContainer1.querySelector('.poke-image')
-                memberImage.src = listItemImage.src
-                let buttonContainer = teamContainer1.querySelector('.buttons')
-                let buttonRemove = document.createElement('button')
-                buttonRemove.addEventListener('click', () => {
-                  nickname.innerText = ''
-                  memberImage.src = ''
-                  teamMember1 = ''
-                  buttonRemove.remove()
-                  checkTeamComplete()
-                })
-                buttonRemove.innerText = 'Remove'
-                buttonContainer.appendChild(buttonRemove)
-              }
-              else if (teamMember2 === '') {
-                teamMember2 = listItemText.innerText
-                listItem.appendChild(listItemImage)
-                listItem.appendChild(listItemInfoContainer)
-                listItemInfoContainer.appendChild(listItemText)
-                listItemInfoContainer.appendChild(listItemAddButton)
-                let nickname = teamContainer2.querySelector('.poke-name')
-                nickname.innerText = nicknameInput.value
-                let memberImage = teamContainer2.querySelector('.poke-image')
-                memberImage.src = listItemImage.src
-                let buttonContainer = teamContainer2.querySelector('.buttons')
-                let buttonRemove = document.createElement('button')
-                buttonRemove.addEventListener('click', () => {
-                  nickname.innerText = ''
-                  memberImage.src = ''
-                  teamMember2 = ''
-                  buttonRemove.remove()
-                  checkTeamComplete()
-                })
-                buttonRemove.innerText = 'Remove'
-                buttonContainer.appendChild(buttonRemove)
-              }
-              else if (teamMember3 === '') {
-                teamMember3 = listItemText.innerText
-                listItem.appendChild(listItemImage)
-                listItem.appendChild(listItemInfoContainer)
-                listItemInfoContainer.appendChild(listItemText)
-                listItemInfoContainer.appendChild(listItemAddButton)
-                let nickname = teamContainer3.querySelector('.poke-name')
-                nickname.innerText = nicknameInput.value
-                let memberImage = teamContainer3.querySelector('.poke-image')
-                memberImage.src = listItemImage.src
-                let buttonContainer = teamContainer3.querySelector('.buttons')
-                let buttonRemove = document.createElement('button')
-                buttonRemove.addEventListener('click', () => {
-                  nickname.innerText = ''
-                  memberImage.src = ''
-                  teamMember3 = ''
-                  buttonRemove.remove()
-                  checkTeamComplete()
-                })
-                buttonRemove.innerText = 'Remove'
-                buttonContainer.appendChild(buttonRemove)
-              }
-              else {
-                listItem.appendChild(listItemImage)
-                listItem.appendChild(listItemInfoContainer)
-                listItemInfoContainer.appendChild(listItemText)
-                listItemInfoContainer.appendChild(listItemAddButton)
+      }
+      listItemAddButton.addEventListener('click', () => {
+        listItemImage.remove()
+        listItemInfoContainer.remove()
+        listItem.classList.add('nicknameprompt')
+        let nicknamePrompt = document.createElement('p')
+        nicknamePrompt.innerText = 'Would you like to add a nickname?'
+        let listButtonContainer = document.createElement('div')
+        let yesButton = document.createElement('button')
+        let noButton = document.createElement('button')
+        yesButton.innerText = 'Yes'
+        noButton.innerText = 'No'
+        yesButton.addEventListener('click', () => {
+          nicknamePrompt.remove()
+          listButtonContainer.remove()
+          let nicknameInput = document.createElement('input')
+          let confirmButton = document.createElement('button')
+          confirmButton.innerText = 'Confirm'
+          confirmButton.addEventListener('click', () => {
+            nicknameInput.remove()
+            confirmButton.remove()
+            if (teamMember1 === '') {
+              teamMember1 = listItemText.innerText
+              listItem.appendChild(listItemImage)
+              listItem.appendChild(listItemInfoContainer)
+              listItemInfoContainer.appendChild(listItemText)
+              listItemInfoContainer.appendChild(listItemAddButton)
+              let nickname = teamContainer1.querySelector('.poke-name')
+              nickname.innerText = nicknameInput.value
+              let memberImage = teamContainer1.querySelector('.poke-image')
+              memberImage.src = listItemImage.src
+              let buttonContainer = teamContainer1.querySelector('.buttons')
+              let buttonContainer2 = teamContainer1.querySelector('.buttons2')
+              let buttonRemove = document.createElement('button')
+              let buttonBench = document.createElement('button')
+              buttonRemove.addEventListener('click', () => {
+                nickname.innerText = ''
+                memberImage.src = ''
+                teamMember1 = ''
+                buttonRemove.remove()
+                buttonBench.remove()
+                checkTeamComplete()
+              })
+              buttonBench.addEventListener('click', () => {
                 let reserveListItem = document.createElement('div')
                 reserveList.appendChild(reserveListItem)
                 let reserveListItemImage = document.createElement('img')
-                reserveListItemImage.src = listItemImage.src
+                reserveListItemImage.src = memberImage.src
                 let reserveListItemInfoContainer = document.createElement('div')
                 let reserveListItemText = document.createElement('p')
-                reserveListItemText.innerText = nicknameInput.value
+                reserveListItemText.innerText = nickname.innerText
                 let reserveListItemRemoveButton = document.createElement('button')
                 reserveListItemRemoveButton.addEventListener('click', () => {
                   reserveListItem.remove()
                 })
                 reserveListItemRemoveButton.innerText = 'Remove'
-                // Sätt innertext, image etc. baserat på Pokémonen som valdes ut.
                 reserveListItem.appendChild(reserveListItemImage)
                 reserveListItem.appendChild(reserveListItemInfoContainer)
                 reserveListItemInfoContainer.appendChild(reserveListItemText)
                 reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
-              }
-              listItem.classList.remove('nicknameprompt')
-            })
-            listItem.appendChild(nicknameInput)
-            listItem.appendChild(confirmButton)
-          })
-          noButton.addEventListener('click', () => {
-            listItem.classList.remove('nicknameprompt')
-            nicknamePrompt.remove()
-            listButtonContainer.remove()
-            listItem.appendChild(listItemImage)
-            listItem.appendChild(listItemInfoContainer)
-            listItemInfoContainer.appendChild(listItemText)
-            listItemInfoContainer.appendChild(listItemAddButton)
-            if (teamMember1 === '') {
-              teamMember1 = listItemText.innerText
-              let memberName = teamContainer1.querySelector('.poke-name')
-              let memberImage = teamContainer1.querySelector('.poke-image')
-              let buttonContainer = teamContainer1.querySelector('.buttons')
-              let buttonRemove = document.createElement('button')
-              buttonRemove.addEventListener('click', () => {
-                memberName.innerText = ''
-                memberImage.src = ''
-                teamMember1 = ''
-                buttonRemove.remove()
-                checkTeamComplete()
+                let promotedPokemon = reserveList.querySelector('div')
+                let promotedPokemonName = promotedPokemon.querySelector('div > p')
+                let promotedPokemonImage = promotedPokemon.querySelector('img')
+                nickname.innerText = promotedPokemonName.innerText
+                memberImage.src = promotedPokemonImage.src
+                promotedPokemon.remove()
               })
-              memberName.innerText = listItemText.innerText
-              memberImage.src = listItemImage.src
               buttonRemove.innerText = 'Remove'
               buttonContainer.appendChild(buttonRemove)
+              buttonBench.innerText = 'Bench'
+              buttonContainer.appendChild(buttonBench)
+              moveButton(buttonContainer2)
             }
             else if (teamMember2 === '') {
               teamMember2 = listItemText.innerText
-              let memberName = teamContainer2.querySelector('.poke-name')
+              listItem.appendChild(listItemImage)
+              listItem.appendChild(listItemInfoContainer)
+              listItemInfoContainer.appendChild(listItemText)
+              listItemInfoContainer.appendChild(listItemAddButton)
+              let nickname = teamContainer2.querySelector('.poke-name')
+              nickname.innerText = nicknameInput.value
               let memberImage = teamContainer2.querySelector('.poke-image')
+              memberImage.src = listItemImage.src
               let buttonContainer = teamContainer2.querySelector('.buttons')
+              let buttonContainer2 = teamContainer2.querySelector('.buttons2')
               let buttonRemove = document.createElement('button')
+              let buttonBench = document.createElement('button')
               buttonRemove.addEventListener('click', () => {
-                memberName.innerText = ''
+                nickname.innerText = ''
                 memberImage.src = ''
                 teamMember2 = ''
                 buttonRemove.remove()
+                buttonBench.remove()
                 checkTeamComplete()
               })
-              memberName.innerText = listItemText.innerText
-              memberImage.src = listItemImage.src
+              buttonBench.addEventListener('click', () => {
+                let reserveListItem = document.createElement('div')
+                reserveList.appendChild(reserveListItem)
+                let reserveListItemImage = document.createElement('img')
+                reserveListItemImage.src = memberImage.src
+                let reserveListItemInfoContainer = document.createElement('div')
+                let reserveListItemText = document.createElement('p')
+                reserveListItemText.innerText = nickname.innerText
+                let reserveListItemRemoveButton = document.createElement('button')
+                reserveListItemRemoveButton.addEventListener('click', () => {
+                  reserveListItem.remove()
+                })
+                reserveListItemRemoveButton.innerText = 'Remove'
+                reserveListItem.appendChild(reserveListItemImage)
+                reserveListItem.appendChild(reserveListItemInfoContainer)
+                reserveListItemInfoContainer.appendChild(reserveListItemText)
+                reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                let promotedPokemon = reserveList.querySelector('div')
+                let promotedPokemonName = promotedPokemon.querySelector('div > p')
+                let promotedPokemonImage = promotedPokemon.querySelector('img')
+                nickname.innerText = promotedPokemonName.innerText
+                memberImage.src = promotedPokemonImage.src
+                promotedPokemon.remove()
+              })
               buttonRemove.innerText = 'Remove'
               buttonContainer.appendChild(buttonRemove)
+              buttonBench.innerText = 'Bench'
+              buttonContainer.appendChild(buttonBench)
+              moveButton(buttonContainer2)
             }
             else if (teamMember3 === '') {
               teamMember3 = listItemText.innerText
-              let memberName = teamContainer3.querySelector('.poke-name')
+              listItem.appendChild(listItemImage)
+              listItem.appendChild(listItemInfoContainer)
+              listItemInfoContainer.appendChild(listItemText)
+              listItemInfoContainer.appendChild(listItemAddButton)
+              let nickname = teamContainer3.querySelector('.poke-name')
+              nickname.innerText = nicknameInput.value
               let memberImage = teamContainer3.querySelector('.poke-image')
+              memberImage.src = listItemImage.src
               let buttonContainer = teamContainer3.querySelector('.buttons')
+              let buttonContainer2 = teamContainer3.querySelector('.buttons2')
               let buttonRemove = document.createElement('button')
               buttonRemove.addEventListener('click', () => {
-                memberName.innerText = ''
+                nickname.innerText = ''
                 memberImage.src = ''
                 teamMember3 = ''
                 buttonRemove.remove()
+                buttonBench.remove()
                 checkTeamComplete()
               })
-              memberName.innerText = listItemText.innerText
-              memberImage.src = listItemImage.src
+              let buttonBench = document.createElement('button')
+              buttonBench.addEventListener('click', () =>{
+                let reserveListItem = document.createElement('div')
+                reserveList.appendChild(reserveListItem)
+                let reserveListItemImage = document.createElement('img')
+                reserveListItemImage.src = memberImage.src
+                let reserveListItemInfoContainer = document.createElement('div')
+                let reserveListItemText = document.createElement('p')
+                reserveListItemText.innerText = nickname.innerText
+                let reserveListItemRemoveButton = document.createElement('button')
+                reserveListItemRemoveButton.addEventListener('click', () => {
+                  reserveListItem.remove()
+                })
+                reserveListItemRemoveButton.innerText = 'Remove'
+                reserveListItem.appendChild(reserveListItemImage)
+                reserveListItem.appendChild(reserveListItemInfoContainer)
+                reserveListItemInfoContainer.appendChild(reserveListItemText)
+                reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                let promotedPokemon = reserveList.querySelector('div')
+                let promotedPokemonName = promotedPokemon.querySelector('div > p')
+                let promotedPokemonImage = promotedPokemon.querySelector('img')
+                nickname.innerText = promotedPokemonName.innerText
+                memberImage.src = promotedPokemonImage.src
+                promotedPokemon.remove()
+              })
               buttonRemove.innerText = 'Remove'
               buttonContainer.appendChild(buttonRemove)
+              buttonBench.innerText = 'Bench'
+              buttonContainer.appendChild(buttonBench)
+              moveButton(buttonContainer2)
             }
             else {
               listItem.appendChild(listItemImage)
@@ -332,7 +373,7 @@ searchField.addEventListener('keyup', async () => {
               reserveListItemImage.src = listItemImage.src
               let reserveListItemInfoContainer = document.createElement('div')
               let reserveListItemText = document.createElement('p')
-              reserveListItemText.innerText = listItemText.innerText
+              reserveListItemText.innerText = nicknameInput.value
               let reserveListItemRemoveButton = document.createElement('button')
               reserveListItemRemoveButton.addEventListener('click', () => {
                 reserveListItem.remove()
@@ -344,31 +385,225 @@ searchField.addEventListener('keyup', async () => {
               reserveListItemInfoContainer.appendChild(reserveListItemText)
               reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
             }
+            listItem.classList.remove('nicknameprompt')
           })
-          listItem.appendChild(nicknamePrompt)
-          listItem.appendChild(listButtonContainer)
-          listButtonContainer.appendChild(yesButton)
-          listButtonContainer.appendChild(noButton)
-          console.log(teamMember1)
-          console.log(teamMember2)
-          console.log(teamMember3)
+          listItem.appendChild(nicknameInput)
+          listItem.appendChild(confirmButton)
         })
-        listItem.appendChild(listItemImage)
-        listItem.appendChild(listItemInfoContainer)
-        listItemInfoContainer.appendChild(listItemText)
-        listItemInfoContainer.appendChild(listItemAddButton)
-        listItemAddButton.innerText = 'Add'
-        //Bugg just nu som innebär att om man söker på t.ex. 'Gourgeist' dyker 9 gourgeists upp, ett för varje knapptryck som matchar namnet.
-        //ClearSearch() i början funkar inte, eftersom det innebär att bara en Pokémon dyker upp per gång (antagligen den sista i ledet med den bokstaven),
-        //och alla andra rensas--t.ex. att söka 'o' visar bara Gourgeist och inte Koraidon, Ogerpon etc.
-        //Detta kanske kan lösas på en av tre olika sätt--David föreslog debounce, som väntar ett tag på att användaren skrivit färdigt innan
-        //sökningen körs, men nämnde att det är lite bortom vad vi egentligen ska kunna. Sedan skulle jag kunna kolla på existerande namn
-        //för att se om listan redan inkluderar Pokémonen man söker på, eller ladda hela listan i början, göra den osynlig, och bara sätta
-        //den till att displaya snarare än generera varje element, men detta känns väldigt overkill.
-        // Också en bugg just nu att vissa arter söks på och visas utan rätt söksträng eftersom deras namn (inklusive former) är det som söks på.
-        // För att lösa detta måste jag fetcha och cachea datan i början, eftersom artnamnen är lagrade ett steg neråt.
-        // (Ska också sätta in input.value.toUpperCase() och data.species.name.toUpperCase() för att göra den icke case-sensitive.)
-      }
+        noButton.addEventListener('click', () => {
+          listItem.classList.remove('nicknameprompt')
+          nicknamePrompt.remove()
+          listButtonContainer.remove()
+          listItem.appendChild(listItemImage)
+          listItem.appendChild(listItemInfoContainer)
+          listItemInfoContainer.appendChild(listItemText)
+          listItemInfoContainer.appendChild(listItemAddButton)
+          if (teamMember1 === '') {
+            teamMember1 = listItemText.innerText
+            let memberName = teamContainer1.querySelector('.poke-name')
+            let memberImage = teamContainer1.querySelector('.poke-image')
+            // // Abilities -- kommentera in när det behövs.        
+            // let memberAbilities = teamContainer1.querySelector('.poke-abilities')
+            // memberAbilities.innerText = 'Possible abilities: '
+            // for (let i = 0; i < datalist.length; i++){
+            //   if (listItemText.innerText.toLowerCase() === datalist[i].name){
+            //     let abilitylist = datalist[i].abilities
+            //     for (let i = 0; i < abilitylist.length; i++){
+            //     memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+            //       if (i != (abilitylist.length - 1)){
+            //         memberAbilities.innerText += ', '
+            //       }
+            //     }
+            //   }
+            // }
+            let buttonContainer = teamContainer1.querySelector('.buttons')
+            let buttonContainer2 = teamContainer1.querySelector('.buttons2')
+            let buttonRemove = document.createElement('button')
+            buttonRemove.addEventListener('click', () => {
+              memberName.innerText = ''
+              memberImage.src = ''
+              teamMember1 = ''
+              buttonRemove.remove()
+              buttonBench.remove()
+              checkTeamComplete()
+            })
+            let buttonBench = document.createElement('button')
+              buttonBench.addEventListener('click', () =>{
+                let reserveListItem = document.createElement('div')
+                reserveList.appendChild(reserveListItem)
+                let reserveListItemImage = document.createElement('img')
+                reserveListItemImage.src = memberImage.src
+                let reserveListItemInfoContainer = document.createElement('div')
+                let reserveListItemText = document.createElement('p')
+                reserveListItemText.innerText = memberName.innerText
+                let reserveListItemRemoveButton = document.createElement('button')
+                reserveListItemRemoveButton.addEventListener('click', () => {
+                  reserveListItem.remove()
+                })
+                reserveListItemRemoveButton.innerText = 'Remove'
+                reserveListItem.appendChild(reserveListItemImage)
+                reserveListItem.appendChild(reserveListItemInfoContainer)
+                reserveListItemInfoContainer.appendChild(reserveListItemText)
+                reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                let promotedPokemon = reserveList.querySelector('div')
+                let promotedPokemonName = promotedPokemon.querySelector('div > p')
+                let promotedPokemonImage = promotedPokemon.querySelector('img')
+                memberName.innerText = promotedPokemonName.innerText
+                memberImage.src = promotedPokemonImage.src
+                promotedPokemon.remove()
+              })
+              memberName.innerText = listItemText.innerText
+              memberImage.src = listItemImage.src
+              buttonRemove.innerText = 'Remove'
+              buttonContainer.appendChild(buttonRemove)
+              buttonBench.innerText = 'Bench'
+              buttonContainer.appendChild(buttonBench)
+              moveButton(buttonContainer2)
+          }
+          else if (teamMember2 === '') {
+            teamMember2 = listItemText.innerText
+            let memberName = teamContainer2.querySelector('.poke-name')
+            let memberImage = teamContainer2.querySelector('.poke-image')
+            let buttonContainer = teamContainer2.querySelector('.buttons')
+            let buttonContainer2 = teamContainer2.querySelector('.buttons2')
+            let buttonRemove = document.createElement('button')
+            buttonRemove.addEventListener('click', () => {
+              memberName.innerText = ''
+              memberImage.src = ''
+              teamMember2 = ''
+              buttonRemove.remove()
+              buttonBench.remove()
+              checkTeamComplete()
+            })
+            let buttonBench = document.createElement('button')
+              buttonBench.addEventListener('click', () =>{
+                let reserveListItem = document.createElement('div')
+                reserveList.appendChild(reserveListItem)
+                let reserveListItemImage = document.createElement('img')
+                reserveListItemImage.src = memberImage.src
+                let reserveListItemInfoContainer = document.createElement('div')
+                let reserveListItemText = document.createElement('p')
+                reserveListItemText.innerText = memberName.innerText
+                let reserveListItemRemoveButton = document.createElement('button')
+                reserveListItemRemoveButton.addEventListener('click', () => {
+                  reserveListItem.remove()
+                })
+                reserveListItemRemoveButton.innerText = 'Remove'
+                reserveListItem.appendChild(reserveListItemImage)
+                reserveListItem.appendChild(reserveListItemInfoContainer)
+                reserveListItemInfoContainer.appendChild(reserveListItemText)
+                reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                let promotedPokemon = reserveList.querySelector('div')
+                let promotedPokemonName = promotedPokemon.querySelector('div > p')
+                let promotedPokemonImage = promotedPokemon.querySelector('img')
+                memberName.innerText = promotedPokemonName.innerText
+                memberImage.src = promotedPokemonImage.src
+                promotedPokemon.remove()
+              })
+              memberName.innerText = listItemText.innerText
+              memberImage.src = listItemImage.src
+              buttonRemove.innerText = 'Remove'
+              buttonContainer.appendChild(buttonRemove)
+              buttonBench.innerText = 'Bench'
+              buttonContainer.appendChild(buttonBench)
+              moveButton(buttonContainer2)
+          }
+          else if (teamMember3 === '') {
+            teamMember3 = listItemText.innerText
+            let memberName = teamContainer3.querySelector('.poke-name')
+            let memberImage = teamContainer3.querySelector('.poke-image')
+            let buttonContainer = teamContainer3.querySelector('.buttons')
+            let buttonContainer2 = teamContainer3.querySelector('.buttons2')
+            let buttonRemove = document.createElement('button')
+            buttonRemove.addEventListener('click', () => {
+              memberName.innerText = ''
+              memberImage.src = ''
+              teamMember3 = ''
+              buttonRemove.remove()
+              buttonBench.remove()
+              checkTeamComplete()
+            })
+            let buttonBench = document.createElement('button')
+              buttonBench.addEventListener('click', () =>{
+                let reserveListItem = document.createElement('div')
+                reserveList.appendChild(reserveListItem)
+                let reserveListItemImage = document.createElement('img')
+                reserveListItemImage.src = memberImage.src
+                let reserveListItemInfoContainer = document.createElement('div')
+                let reserveListItemText = document.createElement('p')
+                reserveListItemText.innerText = memberName.innerText
+                let reserveListItemRemoveButton = document.createElement('button')
+                reserveListItemRemoveButton.addEventListener('click', () => {
+                  reserveListItem.remove()
+                })
+                reserveListItemRemoveButton.innerText = 'Remove'
+                reserveListItem.appendChild(reserveListItemImage)
+                reserveListItem.appendChild(reserveListItemInfoContainer)
+                reserveListItemInfoContainer.appendChild(reserveListItemText)
+                reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                let promotedPokemon = reserveList.querySelector('div')
+                let promotedPokemonName = promotedPokemon.querySelector('div > p')
+                let promotedPokemonImage = promotedPokemon.querySelector('img')
+                memberName.innerText = promotedPokemonName.innerText
+                memberImage.src = promotedPokemonImage.src
+                promotedPokemon.remove()
+              })
+              memberName.innerText = listItemText.innerText
+              memberImage.src = listItemImage.src
+              buttonRemove.innerText = 'Remove'
+              buttonContainer.appendChild(buttonRemove)
+              buttonBench.innerText = 'Bench'
+              buttonContainer.appendChild(buttonBench)
+              moveButton(buttonContainer2)
+          }
+          else {
+            listItem.appendChild(listItemImage)
+            listItem.appendChild(listItemInfoContainer)
+            listItemInfoContainer.appendChild(listItemText)
+            listItemInfoContainer.appendChild(listItemAddButton)
+            let reserveListItem = document.createElement('div')
+            reserveList.appendChild(reserveListItem)
+            let reserveListItemImage = document.createElement('img')
+            reserveListItemImage.src = listItemImage.src
+            let reserveListItemInfoContainer = document.createElement('div')
+            let reserveListItemText = document.createElement('p')
+            reserveListItemText.innerText = listItemText.innerText
+            let reserveListItemRemoveButton = document.createElement('button')
+            reserveListItemRemoveButton.addEventListener('click', () => {
+              reserveListItem.remove()
+            })
+            reserveListItemRemoveButton.innerText = 'Remove'
+            // Sätt innertext, image etc. baserat på Pokémonen som valdes ut.
+            reserveListItem.appendChild(reserveListItemImage)
+            reserveListItem.appendChild(reserveListItemInfoContainer)
+            reserveListItemInfoContainer.appendChild(reserveListItemText)
+            reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+          }
+        })
+        listItem.appendChild(nicknamePrompt)
+        listItem.appendChild(listButtonContainer)
+        listButtonContainer.appendChild(yesButton)
+        listButtonContainer.appendChild(noButton)
+        console.log(teamMember1)
+        console.log(teamMember2)
+        console.log(teamMember3)
+      })
+      listItem.appendChild(listItemImage)
+      listItem.appendChild(listItemInfoContainer)
+      listItemInfoContainer.appendChild(listItemText)
+      listItemInfoContainer.appendChild(listItemAddButton)
+      listItemAddButton.innerText = 'Add'
+      //Bugg just nu som innebär att om man söker på t.ex. 'Gourgeist' dyker 9 gourgeists upp, ett för varje knapptryck som matchar namnet.
+      //ClearSearch() i början funkar inte, eftersom det innebär att bara en Pokémon dyker upp per gång (antagligen den sista i ledet med den bokstaven),
+      //och alla andra rensas--t.ex. att söka 'o' visar bara Gourgeist och inte Koraidon, Ogerpon etc.
+      //Detta kanske kan lösas på en av tre olika sätt--David föreslog debounce, som väntar ett tag på att användaren skrivit färdigt innan
+      //sökningen körs, men nämnde att det är lite bortom vad vi egentligen ska kunna. Sedan skulle jag kunna kolla på existerande namn
+      //för att se om listan redan inkluderar Pokémonen man söker på, eller ladda hela listan i början, göra den osynlig, och bara sätta
+      //den till att displaya snarare än generera varje element, men detta känns väldigt overkill.
+      // Också en bugg just nu att vissa arter söks på och visas utan rätt söksträng eftersom deras namn (inklusive former) är det som söks på.
+      // För att lösa detta måste jag fetcha och cachea datan i början, eftersom artnamnen är lagrade ett steg neråt.
+      // (Ska också sätta in input.value.toUpperCase() och data.species.name.toUpperCase() för att göra den icke case-sensitive.)
+    }
   }
 })
 
@@ -382,7 +617,7 @@ function clearSearch() {
 function checkTeamComplete() {
   if (teamMember1 === '' || teamMember2 === '' || teamMember3 === '') {
     if (teamContainer.querySelector('h3')) {
-
+      
     }
     else {
       let incompleteTeam = document.createElement('h3')
@@ -392,7 +627,7 @@ function checkTeamComplete() {
   }
   else {
     if (!teamContainer.querySelector('h3')) {
-
+      
     }
     else {
       let incompleteTeam = teamContainer.querySelector('h3')

@@ -104,6 +104,10 @@ body{
     justify-content: center;
     margin-top: 1em;
   }
+  .buttons2{
+    display: flex;
+    justify-content: center;
+  }
 
   .buttons > button{
     width: 4em;
@@ -238,8 +242,10 @@ body{
     }
 
     .member-container{
-      display: grid;
-      grid-template-rows: repeat(3, 1fr);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
     }
 
     /* .spotlight{
