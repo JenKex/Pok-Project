@@ -117,15 +117,18 @@ function tabMyTeam() {
 
 // function moveButton(buttonContainer2){
 //   let card = buttonContainer2.parentElement
+//   console.log(card)
 //   console.log(card.parentElement)
 //   let buttonForward = document.createElement('button')
 //   buttonForward.innerText = 'Move Forward'
 //   buttonForward.addEventListener('click', () =>{
 //     teamContainer.insertBefore(card, card.previousSibling)
+//     buttonCheck(buttonContainer2, card, buttonForward, buttonBack)
 //   })
 //   let buttonBack = document.createElement('button')
 //   buttonBack.addEventListener('click', () =>{
 //     teamContainer.insertBefore(card, card.nextSibling.nextSibling)
+//     buttonCheck(buttonContainer2, card, buttonForward, buttonBack)
 //   })
 //   buttonBack.innerText = 'Move Back'
 //   if (card === teamContainer1){
@@ -139,6 +142,136 @@ function tabMyTeam() {
 //     buttonContainer2.appendChild(buttonForward)
 //   }
 // }
+
+// function buttonCheck(buttonContainer2, card, buttonForward, buttonBack){
+//   buttonForward.remove()
+//   buttonBack.remove()
+//   if (card === teamContainer1){
+//     buttonContainer2.appendChild(buttonBack)
+//   }
+//   else if (card === teamContainer2){
+//     buttonContainer2.appendChild(buttonForward)
+//     buttonContainer2.appendChild(buttonBack)
+//   }
+//   else{
+//     buttonContainer2.appendChild(buttonForward)
+// }
+// }
+
+// Andra försök till move-funktion -- hoppades på detta, men det verkar som att man inte kan köra queryselectors på prevCard, eller att dessa
+// element blev undefined för anledningar jag inte kunde reda ut i tid.
+
+// function moveButton(buttonContainer2){
+//   let card = buttonContainer2.parentElement
+//   let name = card.querySelector('.poke-name')
+//   let image = card.querySelector('.poke-image')
+//   let prevCard = card.previousSibling
+//   let nextCard = card.nextSibling
+//   console.log(card.parentElement)
+//   console.log(card)
+//   console.log(prevCard)
+//   let testTeam = card.parentElement.querySelector('.member-container')
+//   console.log(testTeam)
+//   let buttonForward = document.createElement('button')
+//   buttonForward.innerText = 'Move Forward'
+//   buttonForward.addEventListener('click', () =>{
+//     let prevName = prevCard.querySelector('.poke-name')
+//     let prevImage = prevCard.querySelector('.poke-image')
+//     name.innerText = prevName.innerText
+//     image.src = prevImage.src
+//   })
+//   let buttonBack = document.createElement('button')
+//   buttonBack.addEventListener('click', () =>{
+//     nextName = nextCard.querySelector('.poke-name')
+//   })
+//   buttonBack.innerText = 'Move Back'
+//   if (card === teamContainer1){
+//   buttonContainer2.appendChild(buttonBack)
+//   }
+//   else if (card === teamContainer2){
+//     buttonContainer2.appendChild(buttonForward)
+//     buttonContainer2.appendChild(buttonBack)
+//   }
+//   else{
+//     buttonContainer2.appendChild(buttonForward)
+//   }
+// }
+
+function moveButton(buttonContainer2){
+  let card = buttonContainer2.parentElement
+  console.log(card)
+  console.log(card.parentElement)
+  let buttonForward = document.createElement('button')
+  buttonForward.innerText = 'Move Forward'
+  buttonForward.addEventListener('click', () =>{
+    if (card.previousSibling){
+    teamContainer.insertBefore(card, card.previousSibling)
+    }
+  })
+  let buttonBack = document.createElement('button')
+  buttonBack.addEventListener('click', () =>{
+    if (card.nextSibling){
+    teamContainer.insertBefore(card, card.nextSibling.nextSibling)
+    }
+  })
+  buttonBack.innerText = 'Move Back'
+  buttonContainer2.appendChild(buttonForward)
+  buttonContainer2.appendChild(buttonBack)
+}
+
+function moveButtonReserve(reserveListItemInfoContainer){
+  let card = reserveListItemInfoContainer.parentElement
+  let buttonForward = document.createElement('button')
+  buttonForward.innerText = 'Forward'
+  buttonForward.addEventListener('click', () =>{
+    if (card.previousSibling){
+    reserveList.insertBefore(card, card.previousSibling)
+    }
+  })
+  let buttonBack = document.createElement('button')
+  buttonBack.addEventListener('click', () =>{
+    reserveList.insertBefore(card, card.nextSibling.nextSibling)
+  })
+  buttonBack.innerText = 'Back'
+  reserveListItemInfoContainer.appendChild(buttonForward)
+  reserveListItemInfoContainer.appendChild(buttonBack)
+}
+
+function removeButtonsAbilities(memberAbilities, buttonContainer2){
+  let moveButtons = buttonContainer2.querySelectorAll('button')
+  for (let i = 0; i < moveButtons.length; i++){
+    moveButtons[i].remove()
+  }
+  memberAbilities.innerText = ''
+}
+
+function addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName){
+  for (let i = 0; i < datalist.length; i++){
+    if (promotedPokemonName.innerText.toLowerCase() === datalist[i].name){
+      let abilitylist = datalist[i].abilities
+      for (let i = 0; i < abilitylist.length; i++){
+        if (i != (abilitylist.length - 1)){
+          if (abilitylist[i].includes('-')){
+            let splitability = abilitylist[i].split('-')
+            memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1) + ', '
+          }
+          else{
+            memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
+            }
+          }
+          else{
+            if (abilitylist[i].includes('-')){
+              let splitability = abilitylist[i].split('-')
+              memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
+            }
+            else{
+              memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+          }
+        }
+      }
+    }
+  }
+}
 
 //Det känns som att jag har fått fler problem med dubletter?
 //Måste implementera dublett-protection, är alldeles för bängligt annars om man skriver snabbt
@@ -216,6 +349,32 @@ searchField.addEventListener('keyup', async () => {
               nickname.innerText = nicknameInput.value
               let memberImage = teamContainer1.querySelector('.poke-image')
               memberImage.src = listItemImage.src
+              let memberAbilities = teamContainer1.querySelector('.poke-abilities')
+              for (let i = 0; i < datalist.length; i++){
+                if (listItemText.innerText.toLowerCase() === datalist[i].name){
+                  let abilitylist = datalist[i].abilities
+                  for (let i = 0; i < abilitylist.length; i++){
+                    if (i != (abilitylist.length - 1)){
+                      if (abilitylist[i].includes('-')){
+                        let splitability = abilitylist[i].split('-')
+                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1) + ', '
+                      }
+                      else{
+                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
+                        }
+                      }
+                      else{
+                        if (abilitylist[i].includes('-')){
+                          let splitability = abilitylist[i].split('-')
+                          memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
+                        }
+                        else{
+                          memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                      }
+                    }
+                  }
+                }
+              }
               let buttonContainer = teamContainer1.querySelector('.buttons')
               let buttonContainer2 = teamContainer1.querySelector('.buttons2')
               let buttonRemove = document.createElement('button')
@@ -226,6 +385,7 @@ searchField.addEventListener('keyup', async () => {
                 teamMember1 = ''
                 buttonRemove.remove()
                 buttonBench.remove()
+                removeButtonsAbilities(memberAbilities, buttonContainer2)
                 checkTeamComplete()
               })
               buttonBench.addEventListener('click', () => {
@@ -245,11 +405,15 @@ searchField.addEventListener('keyup', async () => {
                 reserveListItem.appendChild(reserveListItemInfoContainer)
                 reserveListItemInfoContainer.appendChild(reserveListItemText)
                 reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                moveButtonReserve(reserveListItemInfoContainer)
                 let promotedPokemon = reserveList.querySelector('div')
                 let promotedPokemonName = promotedPokemon.querySelector('div > p')
                 let promotedPokemonImage = promotedPokemon.querySelector('img')
                 nickname.innerText = promotedPokemonName.innerText
                 memberImage.src = promotedPokemonImage.src
+                removeButtonsAbilities(memberAbilities, buttonContainer2)
+                moveButton(buttonContainer2)
+                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
                 promotedPokemon.remove()
               })
               buttonRemove.innerText = 'Remove'
@@ -268,6 +432,32 @@ searchField.addEventListener('keyup', async () => {
               nickname.innerText = nicknameInput.value
               let memberImage = teamContainer2.querySelector('.poke-image')
               memberImage.src = listItemImage.src
+              let memberAbilities = teamContainer2.querySelector('.poke-abilities')
+              for (let i = 0; i < datalist.length; i++){
+                if (listItemText.innerText.toLowerCase() === datalist[i].name){
+                  let abilitylist = datalist[i].abilities
+                  for (let i = 0; i < abilitylist.length; i++){
+                    if (i != (abilitylist.length - 1)){
+                      if (abilitylist[i].includes('-')){
+                        let splitability = abilitylist[i].split('-')
+                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1) + ', '
+                      }
+                      else{
+                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
+                        }
+                      }
+                      else{
+                        if (abilitylist[i].includes('-')){
+                          let splitability = abilitylist[i].split('-')
+                          memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
+                        }
+                        else{
+                          memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                      }
+                    }
+                  }
+                }
+              }
               let buttonContainer = teamContainer2.querySelector('.buttons')
               let buttonContainer2 = teamContainer2.querySelector('.buttons2')
               let buttonRemove = document.createElement('button')
@@ -278,6 +468,7 @@ searchField.addEventListener('keyup', async () => {
                 teamMember2 = ''
                 buttonRemove.remove()
                 buttonBench.remove()
+                removeButtonsAbilities(memberAbilities, buttonContainer2)
                 checkTeamComplete()
               })
               buttonBench.addEventListener('click', () => {
@@ -297,11 +488,15 @@ searchField.addEventListener('keyup', async () => {
                 reserveListItem.appendChild(reserveListItemInfoContainer)
                 reserveListItemInfoContainer.appendChild(reserveListItemText)
                 reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                moveButtonReserve(reserveListItemInfoContainer)
                 let promotedPokemon = reserveList.querySelector('div')
                 let promotedPokemonName = promotedPokemon.querySelector('div > p')
                 let promotedPokemonImage = promotedPokemon.querySelector('img')
                 nickname.innerText = promotedPokemonName.innerText
                 memberImage.src = promotedPokemonImage.src
+                removeButtonsAbilities(memberAbilities, buttonContainer2)
+                moveButton(buttonContainer2)
+                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
                 promotedPokemon.remove()
               })
               buttonRemove.innerText = 'Remove'
@@ -320,6 +515,32 @@ searchField.addEventListener('keyup', async () => {
               nickname.innerText = nicknameInput.value
               let memberImage = teamContainer3.querySelector('.poke-image')
               memberImage.src = listItemImage.src
+              let memberAbilities = teamContainer3.querySelector('.poke-abilities')
+              for (let i = 0; i < datalist.length; i++){
+                if (listItemText.innerText.toLowerCase() === datalist[i].name){
+                  let abilitylist = datalist[i].abilities
+                  for (let i = 0; i < abilitylist.length; i++){
+                    if (i != (abilitylist.length - 1)){
+                      if (abilitylist[i].includes('-')){
+                        let splitability = abilitylist[i].split('-')
+                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1) + ', '
+                      }
+                      else{
+                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
+                        }
+                      }
+                      else{
+                        if (abilitylist[i].includes('-')){
+                          let splitability = abilitylist[i].split('-')
+                          memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
+                        }
+                        else{
+                          memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                      }
+                    }
+                  }
+                }
+              }
               let buttonContainer = teamContainer3.querySelector('.buttons')
               let buttonContainer2 = teamContainer3.querySelector('.buttons2')
               let buttonRemove = document.createElement('button')
@@ -329,6 +550,7 @@ searchField.addEventListener('keyup', async () => {
                 teamMember3 = ''
                 buttonRemove.remove()
                 buttonBench.remove()
+                removeButtonsAbilities(memberAbilities, buttonContainer2)
                 checkTeamComplete()
               })
               let buttonBench = document.createElement('button')
@@ -349,11 +571,15 @@ searchField.addEventListener('keyup', async () => {
                 reserveListItem.appendChild(reserveListItemInfoContainer)
                 reserveListItemInfoContainer.appendChild(reserveListItemText)
                 reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                moveButtonReserve(reserveListItemInfoContainer)
                 let promotedPokemon = reserveList.querySelector('div')
                 let promotedPokemonName = promotedPokemon.querySelector('div > p')
                 let promotedPokemonImage = promotedPokemon.querySelector('img')
                 nickname.innerText = promotedPokemonName.innerText
                 memberImage.src = promotedPokemonImage.src
+                removeButtonsAbilities(memberAbilities, buttonContainer2)
+                moveButton(buttonContainer2)
+                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
                 promotedPokemon.remove()
               })
               buttonRemove.innerText = 'Remove'
@@ -384,6 +610,7 @@ searchField.addEventListener('keyup', async () => {
               reserveListItem.appendChild(reserveListItemInfoContainer)
               reserveListItemInfoContainer.appendChild(reserveListItemText)
               reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+              moveButtonReserve(reserveListItemInfoContainer)
             }
             listItem.classList.remove('nicknameprompt')
           })
@@ -403,19 +630,32 @@ searchField.addEventListener('keyup', async () => {
             let memberName = teamContainer1.querySelector('.poke-name')
             let memberImage = teamContainer1.querySelector('.poke-image')
             // // Abilities -- kommentera in när det behövs.        
-            // let memberAbilities = teamContainer1.querySelector('.poke-abilities')
-            // memberAbilities.innerText = 'Possible abilities: '
-            // for (let i = 0; i < datalist.length; i++){
-            //   if (listItemText.innerText.toLowerCase() === datalist[i].name){
-            //     let abilitylist = datalist[i].abilities
-            //     for (let i = 0; i < abilitylist.length; i++){
-            //     memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
-            //       if (i != (abilitylist.length - 1)){
-            //         memberAbilities.innerText += ', '
-            //       }
-            //     }
-            //   }
-            // }
+            let memberAbilities = teamContainer1.querySelector('.poke-abilities')
+            for (let i = 0; i < datalist.length; i++){
+              if (listItemText.innerText.toLowerCase() === datalist[i].name){
+                let abilitylist = datalist[i].abilities
+                for (let i = 0; i < abilitylist.length; i++){
+                  if (i != (abilitylist.length - 1)){
+                    if (abilitylist[i].includes('-')){
+                      let splitability = abilitylist[i].split('-')
+                      memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1) + ', '
+                    }
+                    else{
+                      memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
+                      }
+                    }
+                    else{
+                      if (abilitylist[i].includes('-')){
+                        let splitability = abilitylist[i].split('-')
+                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
+                      }
+                      else{
+                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                    }
+                  }
+                }
+              }
+            }
             let buttonContainer = teamContainer1.querySelector('.buttons')
             let buttonContainer2 = teamContainer1.querySelector('.buttons2')
             let buttonRemove = document.createElement('button')
@@ -425,6 +665,7 @@ searchField.addEventListener('keyup', async () => {
               teamMember1 = ''
               buttonRemove.remove()
               buttonBench.remove()
+              removeButtonsAbilities(memberAbilities, buttonContainer2)
               checkTeamComplete()
             })
             let buttonBench = document.createElement('button')
@@ -445,11 +686,15 @@ searchField.addEventListener('keyup', async () => {
                 reserveListItem.appendChild(reserveListItemInfoContainer)
                 reserveListItemInfoContainer.appendChild(reserveListItemText)
                 reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                moveButtonReserve(reserveListItemInfoContainer)
                 let promotedPokemon = reserveList.querySelector('div')
                 let promotedPokemonName = promotedPokemon.querySelector('div > p')
                 let promotedPokemonImage = promotedPokemon.querySelector('img')
                 memberName.innerText = promotedPokemonName.innerText
                 memberImage.src = promotedPokemonImage.src
+                removeButtonsAbilities(memberAbilities, buttonContainer2)
+                moveButton(buttonContainer2)
+                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
                 promotedPokemon.remove()
               })
               memberName.innerText = listItemText.innerText
@@ -464,6 +709,32 @@ searchField.addEventListener('keyup', async () => {
             teamMember2 = listItemText.innerText
             let memberName = teamContainer2.querySelector('.poke-name')
             let memberImage = teamContainer2.querySelector('.poke-image')
+            let memberAbilities = teamContainer2.querySelector('.poke-abilities')
+            for (let i = 0; i < datalist.length; i++){
+              if (listItemText.innerText.toLowerCase() === datalist[i].name){
+                let abilitylist = datalist[i].abilities
+                for (let i = 0; i < abilitylist.length; i++){
+                  if (i != (abilitylist.length - 1)){
+                    if (abilitylist[i].includes('-')){
+                      let splitability = abilitylist[i].split('-')
+                      memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1) + ', '
+                    }
+                    else{
+                      memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
+                      }
+                    }
+                    else{
+                      if (abilitylist[i].includes('-')){
+                        let splitability = abilitylist[i].split('-')
+                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
+                      }
+                      else{
+                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                    }
+                  }
+                }
+              }
+            }
             let buttonContainer = teamContainer2.querySelector('.buttons')
             let buttonContainer2 = teamContainer2.querySelector('.buttons2')
             let buttonRemove = document.createElement('button')
@@ -473,6 +744,7 @@ searchField.addEventListener('keyup', async () => {
               teamMember2 = ''
               buttonRemove.remove()
               buttonBench.remove()
+              removeButtonsAbilities(memberAbilities, buttonContainer2)
               checkTeamComplete()
             })
             let buttonBench = document.createElement('button')
@@ -493,11 +765,15 @@ searchField.addEventListener('keyup', async () => {
                 reserveListItem.appendChild(reserveListItemInfoContainer)
                 reserveListItemInfoContainer.appendChild(reserveListItemText)
                 reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                moveButtonReserve(reserveListItemInfoContainer)
                 let promotedPokemon = reserveList.querySelector('div')
                 let promotedPokemonName = promotedPokemon.querySelector('div > p')
                 let promotedPokemonImage = promotedPokemon.querySelector('img')
                 memberName.innerText = promotedPokemonName.innerText
                 memberImage.src = promotedPokemonImage.src
+                removeButtonsAbilities(memberAbilities, buttonContainer2)
+                moveButton(buttonContainer2)
+                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
                 promotedPokemon.remove()
               })
               memberName.innerText = listItemText.innerText
@@ -512,6 +788,32 @@ searchField.addEventListener('keyup', async () => {
             teamMember3 = listItemText.innerText
             let memberName = teamContainer3.querySelector('.poke-name')
             let memberImage = teamContainer3.querySelector('.poke-image')
+            let memberAbilities = teamContainer3.querySelector('.poke-abilities')
+            for (let i = 0; i < datalist.length; i++){
+              if (listItemText.innerText.toLowerCase() === datalist[i].name){
+                let abilitylist = datalist[i].abilities
+                for (let i = 0; i < abilitylist.length; i++){
+                  if (i != (abilitylist.length - 1)){
+                    if (abilitylist[i].includes('-')){
+                      let splitability = abilitylist[i].split('-')
+                      memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1) + ', '
+                    }
+                    else{
+                      memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
+                      }
+                    }
+                    else{
+                      if (abilitylist[i].includes('-')){
+                        let splitability = abilitylist[i].split('-')
+                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
+                      }
+                      else{
+                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                    }
+                  }
+                }
+              }
+            }
             let buttonContainer = teamContainer3.querySelector('.buttons')
             let buttonContainer2 = teamContainer3.querySelector('.buttons2')
             let buttonRemove = document.createElement('button')
@@ -521,6 +823,7 @@ searchField.addEventListener('keyup', async () => {
               teamMember3 = ''
               buttonRemove.remove()
               buttonBench.remove()
+              removeButtonsAbilities(memberAbilities, buttonContainer2)
               checkTeamComplete()
             })
             let buttonBench = document.createElement('button')
@@ -541,11 +844,15 @@ searchField.addEventListener('keyup', async () => {
                 reserveListItem.appendChild(reserveListItemInfoContainer)
                 reserveListItemInfoContainer.appendChild(reserveListItemText)
                 reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+                moveButtonReserve(reserveListItemInfoContainer)
                 let promotedPokemon = reserveList.querySelector('div')
                 let promotedPokemonName = promotedPokemon.querySelector('div > p')
                 let promotedPokemonImage = promotedPokemon.querySelector('img')
                 memberName.innerText = promotedPokemonName.innerText
                 memberImage.src = promotedPokemonImage.src
+                removeButtonsAbilities(memberAbilities, buttonContainer2)
+                moveButton(buttonContainer2)
+                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
                 promotedPokemon.remove()
               })
               memberName.innerText = listItemText.innerText
@@ -578,6 +885,7 @@ searchField.addEventListener('keyup', async () => {
             reserveListItem.appendChild(reserveListItemInfoContainer)
             reserveListItemInfoContainer.appendChild(reserveListItemText)
             reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+            moveButtonReserve(reserveListItemInfoContainer)
           }
         })
         listItem.appendChild(nicknamePrompt)

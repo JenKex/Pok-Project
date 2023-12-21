@@ -77,9 +77,16 @@ body{
   }
 
   .member-container{
+    display: flex;
+    flex-direction: column;
     margin: auto;
     margin-top: 1em;
     margin-bottom: 2em;
+    justify-content: center;
+    align-items: center;
+  }
+  .member-container > img{
+    min-width: 40%;
   }
 
   #team-container > h3{
@@ -88,9 +95,15 @@ body{
     margin: auto;
     font-family: Fira Sans;
   }
+  .member-container > h4{
+    text-align: center;
+    margin: auto;
+    font-size: 14px;
+  }
 
   h2{
     margin: auto;
+    text-align: center;
     font-family: Fira Sans;
   }
 
@@ -242,8 +255,9 @@ body{
     }
 
     .member-container{
+      grid-row: 2;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
     }
