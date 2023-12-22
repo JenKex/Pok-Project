@@ -124,15 +124,19 @@ function tabMyTeam() {
 //   buttonForward.addEventListener('click', () =>{
 //     teamContainer.insertBefore(card, card.previousSibling)
 //     buttonCheck(buttonContainer2, card, buttonForward, buttonBack)
+//     buttonBack.disabled = false
 //   })
 //   let buttonBack = document.createElement('button')
 //   buttonBack.addEventListener('click', () =>{
 //     teamContainer.insertBefore(card, card.nextSibling.nextSibling)
 //     buttonCheck(buttonContainer2, card, buttonForward, buttonBack)
+//     buttonForward.disabled = false
 //   })
 //   buttonBack.innerText = 'Move Back'
 //   if (card === teamContainer1){
+//     buttonContainer2.appendChild(buttonForward)
 //   buttonContainer2.appendChild(buttonBack)
+//   buttonForward.disabled = true
 //   }
 //   else if (card === teamContainer2){
 //     buttonContainer2.appendChild(buttonForward)
@@ -140,6 +144,8 @@ function tabMyTeam() {
 //   }
 //   else{
 //     buttonContainer2.appendChild(buttonForward)
+//     buttonContainer2.appendChild(buttonBack)
+//     buttonBack.disabled = true
 //   }
 // }
 
@@ -205,13 +211,13 @@ function moveButton(buttonContainer2){
   buttonForward.innerText = 'Move Forward'
   buttonForward.addEventListener('click', () =>{
     if (card.previousSibling){
-    teamContainer.insertBefore(card, card.previousSibling)
+      teamContainer.insertBefore(card, card.previousSibling)
     }
   })
   let buttonBack = document.createElement('button')
   buttonBack.addEventListener('click', () =>{
     if (card.nextSibling){
-    teamContainer.insertBefore(card, card.nextSibling.nextSibling)
+      teamContainer.insertBefore(card, card.nextSibling.nextSibling)
     }
   })
   buttonBack.innerText = 'Move Back'
@@ -225,7 +231,7 @@ function moveButtonReserve(reserveListItemInfoContainer){
   buttonForward.innerText = 'Forward'
   buttonForward.addEventListener('click', () =>{
     if (card.previousSibling){
-    reserveList.insertBefore(card, card.previousSibling)
+      reserveList.insertBefore(card, card.previousSibling)
     }
   })
   let buttonBack = document.createElement('button')
@@ -245,9 +251,9 @@ function removeButtonsAbilities(memberAbilities, buttonContainer2){
   memberAbilities.innerText = ''
 }
 
-function addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName){
+function addAbilityFromReserve(datalist, memberAbilities, promotedPokemonImage){
   for (let i = 0; i < datalist.length; i++){
-    if (promotedPokemonName.innerText.toLowerCase() === datalist[i].name){
+    if (promotedPokemonImage.src === datalist[i].sprite){
       let abilitylist = datalist[i].abilities
       for (let i = 0; i < abilitylist.length; i++){
         if (i != (abilitylist.length - 1)){
@@ -257,15 +263,15 @@ function addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName){
           }
           else{
             memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
-            }
+          }
+        }
+        else{
+          if (abilitylist[i].includes('-')){
+            let splitability = abilitylist[i].split('-')
+            memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
           }
           else{
-            if (abilitylist[i].includes('-')){
-              let splitability = abilitylist[i].split('-')
-              memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
-            }
-            else{
-              memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+            memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
           }
         }
       }
@@ -361,15 +367,15 @@ searchField.addEventListener('keyup', async () => {
                       }
                       else{
                         memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
-                        }
+                      }
+                    }
+                    else{
+                      if (abilitylist[i].includes('-')){
+                        let splitability = abilitylist[i].split('-')
+                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
                       }
                       else{
-                        if (abilitylist[i].includes('-')){
-                          let splitability = abilitylist[i].split('-')
-                          memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
-                        }
-                        else{
-                          memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
                       }
                     }
                   }
@@ -413,7 +419,7 @@ searchField.addEventListener('keyup', async () => {
                 memberImage.src = promotedPokemonImage.src
                 removeButtonsAbilities(memberAbilities, buttonContainer2)
                 moveButton(buttonContainer2)
-                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
+                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonImage)
                 promotedPokemon.remove()
               })
               buttonRemove.innerText = 'Remove'
@@ -444,15 +450,15 @@ searchField.addEventListener('keyup', async () => {
                       }
                       else{
                         memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
-                        }
+                      }
+                    }
+                    else{
+                      if (abilitylist[i].includes('-')){
+                        let splitability = abilitylist[i].split('-')
+                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
                       }
                       else{
-                        if (abilitylist[i].includes('-')){
-                          let splitability = abilitylist[i].split('-')
-                          memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
-                        }
-                        else{
-                          memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
                       }
                     }
                   }
@@ -496,7 +502,7 @@ searchField.addEventListener('keyup', async () => {
                 memberImage.src = promotedPokemonImage.src
                 removeButtonsAbilities(memberAbilities, buttonContainer2)
                 moveButton(buttonContainer2)
-                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
+                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonImage)
                 promotedPokemon.remove()
               })
               buttonRemove.innerText = 'Remove'
@@ -527,15 +533,15 @@ searchField.addEventListener('keyup', async () => {
                       }
                       else{
                         memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
-                        }
+                      }
+                    }
+                    else{
+                      if (abilitylist[i].includes('-')){
+                        let splitability = abilitylist[i].split('-')
+                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
                       }
                       else{
-                        if (abilitylist[i].includes('-')){
-                          let splitability = abilitylist[i].split('-')
-                          memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
-                        }
-                        else{
-                          memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
                       }
                     }
                   }
@@ -579,7 +585,7 @@ searchField.addEventListener('keyup', async () => {
                 memberImage.src = promotedPokemonImage.src
                 removeButtonsAbilities(memberAbilities, buttonContainer2)
                 moveButton(buttonContainer2)
-                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
+                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonImage)
                 promotedPokemon.remove()
               })
               buttonRemove.innerText = 'Remove'
@@ -642,15 +648,15 @@ searchField.addEventListener('keyup', async () => {
                     }
                     else{
                       memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
-                      }
+                    }
+                  }
+                  else{
+                    if (abilitylist[i].includes('-')){
+                      let splitability = abilitylist[i].split('-')
+                      memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
                     }
                     else{
-                      if (abilitylist[i].includes('-')){
-                        let splitability = abilitylist[i].split('-')
-                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
-                      }
-                      else{
-                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                      memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
                     }
                   }
                 }
@@ -669,41 +675,41 @@ searchField.addEventListener('keyup', async () => {
               checkTeamComplete()
             })
             let buttonBench = document.createElement('button')
-              buttonBench.addEventListener('click', () =>{
-                let reserveListItem = document.createElement('div')
-                reserveList.appendChild(reserveListItem)
-                let reserveListItemImage = document.createElement('img')
-                reserveListItemImage.src = memberImage.src
-                let reserveListItemInfoContainer = document.createElement('div')
-                let reserveListItemText = document.createElement('p')
-                reserveListItemText.innerText = memberName.innerText
-                let reserveListItemRemoveButton = document.createElement('button')
-                reserveListItemRemoveButton.addEventListener('click', () => {
-                  reserveListItem.remove()
-                })
-                reserveListItemRemoveButton.innerText = 'Remove'
-                reserveListItem.appendChild(reserveListItemImage)
-                reserveListItem.appendChild(reserveListItemInfoContainer)
-                reserveListItemInfoContainer.appendChild(reserveListItemText)
-                reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
-                moveButtonReserve(reserveListItemInfoContainer)
-                let promotedPokemon = reserveList.querySelector('div')
-                let promotedPokemonName = promotedPokemon.querySelector('div > p')
-                let promotedPokemonImage = promotedPokemon.querySelector('img')
-                memberName.innerText = promotedPokemonName.innerText
-                memberImage.src = promotedPokemonImage.src
-                removeButtonsAbilities(memberAbilities, buttonContainer2)
-                moveButton(buttonContainer2)
-                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
-                promotedPokemon.remove()
+            buttonBench.addEventListener('click', () =>{
+              let reserveListItem = document.createElement('div')
+              reserveList.appendChild(reserveListItem)
+              let reserveListItemImage = document.createElement('img')
+              reserveListItemImage.src = memberImage.src
+              let reserveListItemInfoContainer = document.createElement('div')
+              let reserveListItemText = document.createElement('p')
+              reserveListItemText.innerText = memberName.innerText
+              let reserveListItemRemoveButton = document.createElement('button')
+              reserveListItemRemoveButton.addEventListener('click', () => {
+                reserveListItem.remove()
               })
-              memberName.innerText = listItemText.innerText
-              memberImage.src = listItemImage.src
-              buttonRemove.innerText = 'Remove'
-              buttonContainer.appendChild(buttonRemove)
-              buttonBench.innerText = 'Bench'
-              buttonContainer.appendChild(buttonBench)
+              reserveListItemRemoveButton.innerText = 'Remove'
+              reserveListItem.appendChild(reserveListItemImage)
+              reserveListItem.appendChild(reserveListItemInfoContainer)
+              reserveListItemInfoContainer.appendChild(reserveListItemText)
+              reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+              moveButtonReserve(reserveListItemInfoContainer)
+              let promotedPokemon = reserveList.querySelector('div')
+              let promotedPokemonName = promotedPokemon.querySelector('div > p')
+              let promotedPokemonImage = promotedPokemon.querySelector('img')
+              memberName.innerText = promotedPokemonName.innerText
+              memberImage.src = promotedPokemonImage.src
+              removeButtonsAbilities(memberAbilities, buttonContainer2)
               moveButton(buttonContainer2)
+              addAbilityFromReserve(datalist, memberAbilities, promotedPokemonImage)
+              promotedPokemon.remove()
+            })
+            memberName.innerText = listItemText.innerText
+            memberImage.src = listItemImage.src
+            buttonRemove.innerText = 'Remove'
+            buttonContainer.appendChild(buttonRemove)
+            buttonBench.innerText = 'Bench'
+            buttonContainer.appendChild(buttonBench)
+            moveButton(buttonContainer2)
           }
           else if (teamMember2 === '') {
             teamMember2 = listItemText.innerText
@@ -721,15 +727,15 @@ searchField.addEventListener('keyup', async () => {
                     }
                     else{
                       memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
-                      }
+                    }
+                  }
+                  else{
+                    if (abilitylist[i].includes('-')){
+                      let splitability = abilitylist[i].split('-')
+                      memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
                     }
                     else{
-                      if (abilitylist[i].includes('-')){
-                        let splitability = abilitylist[i].split('-')
-                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
-                      }
-                      else{
-                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                      memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
                     }
                   }
                 }
@@ -748,41 +754,41 @@ searchField.addEventListener('keyup', async () => {
               checkTeamComplete()
             })
             let buttonBench = document.createElement('button')
-              buttonBench.addEventListener('click', () =>{
-                let reserveListItem = document.createElement('div')
-                reserveList.appendChild(reserveListItem)
-                let reserveListItemImage = document.createElement('img')
-                reserveListItemImage.src = memberImage.src
-                let reserveListItemInfoContainer = document.createElement('div')
-                let reserveListItemText = document.createElement('p')
-                reserveListItemText.innerText = memberName.innerText
-                let reserveListItemRemoveButton = document.createElement('button')
-                reserveListItemRemoveButton.addEventListener('click', () => {
-                  reserveListItem.remove()
-                })
-                reserveListItemRemoveButton.innerText = 'Remove'
-                reserveListItem.appendChild(reserveListItemImage)
-                reserveListItem.appendChild(reserveListItemInfoContainer)
-                reserveListItemInfoContainer.appendChild(reserveListItemText)
-                reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
-                moveButtonReserve(reserveListItemInfoContainer)
-                let promotedPokemon = reserveList.querySelector('div')
-                let promotedPokemonName = promotedPokemon.querySelector('div > p')
-                let promotedPokemonImage = promotedPokemon.querySelector('img')
-                memberName.innerText = promotedPokemonName.innerText
-                memberImage.src = promotedPokemonImage.src
-                removeButtonsAbilities(memberAbilities, buttonContainer2)
-                moveButton(buttonContainer2)
-                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
-                promotedPokemon.remove()
+            buttonBench.addEventListener('click', () =>{
+              let reserveListItem = document.createElement('div')
+              reserveList.appendChild(reserveListItem)
+              let reserveListItemImage = document.createElement('img')
+              reserveListItemImage.src = memberImage.src
+              let reserveListItemInfoContainer = document.createElement('div')
+              let reserveListItemText = document.createElement('p')
+              reserveListItemText.innerText = memberName.innerText
+              let reserveListItemRemoveButton = document.createElement('button')
+              reserveListItemRemoveButton.addEventListener('click', () => {
+                reserveListItem.remove()
               })
-              memberName.innerText = listItemText.innerText
-              memberImage.src = listItemImage.src
-              buttonRemove.innerText = 'Remove'
-              buttonContainer.appendChild(buttonRemove)
-              buttonBench.innerText = 'Bench'
-              buttonContainer.appendChild(buttonBench)
+              reserveListItemRemoveButton.innerText = 'Remove'
+              reserveListItem.appendChild(reserveListItemImage)
+              reserveListItem.appendChild(reserveListItemInfoContainer)
+              reserveListItemInfoContainer.appendChild(reserveListItemText)
+              reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+              moveButtonReserve(reserveListItemInfoContainer)
+              let promotedPokemon = reserveList.querySelector('div')
+              let promotedPokemonName = promotedPokemon.querySelector('div > p')
+              let promotedPokemonImage = promotedPokemon.querySelector('img')
+              memberName.innerText = promotedPokemonName.innerText
+              memberImage.src = promotedPokemonImage.src
+              removeButtonsAbilities(memberAbilities, buttonContainer2)
               moveButton(buttonContainer2)
+              addAbilityFromReserve(datalist, memberAbilities, promotedPokemonImage)
+              promotedPokemon.remove()
+            })
+            memberName.innerText = listItemText.innerText
+            memberImage.src = listItemImage.src
+            buttonRemove.innerText = 'Remove'
+            buttonContainer.appendChild(buttonRemove)
+            buttonBench.innerText = 'Bench'
+            buttonContainer.appendChild(buttonBench)
+            moveButton(buttonContainer2)
           }
           else if (teamMember3 === '') {
             teamMember3 = listItemText.innerText
@@ -800,15 +806,15 @@ searchField.addEventListener('keyup', async () => {
                     }
                     else{
                       memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1) + ', '
-                      }
+                    }
+                  }
+                  else{
+                    if (abilitylist[i].includes('-')){
+                      let splitability = abilitylist[i].split('-')
+                      memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
                     }
                     else{
-                      if (abilitylist[i].includes('-')){
-                        let splitability = abilitylist[i].split('-')
-                        memberAbilities.innerText += splitability[0][0].toUpperCase() + splitability[0].slice(1) + ' ' + splitability[1][0].toUpperCase() + splitability[1].slice(1)
-                      }
-                      else{
-                        memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
+                      memberAbilities.innerText += abilitylist[i][0].toUpperCase() + abilitylist[i].slice(1)
                     }
                   }
                 }
@@ -827,41 +833,41 @@ searchField.addEventListener('keyup', async () => {
               checkTeamComplete()
             })
             let buttonBench = document.createElement('button')
-              buttonBench.addEventListener('click', () =>{
-                let reserveListItem = document.createElement('div')
-                reserveList.appendChild(reserveListItem)
-                let reserveListItemImage = document.createElement('img')
-                reserveListItemImage.src = memberImage.src
-                let reserveListItemInfoContainer = document.createElement('div')
-                let reserveListItemText = document.createElement('p')
-                reserveListItemText.innerText = memberName.innerText
-                let reserveListItemRemoveButton = document.createElement('button')
-                reserveListItemRemoveButton.addEventListener('click', () => {
-                  reserveListItem.remove()
-                })
-                reserveListItemRemoveButton.innerText = 'Remove'
-                reserveListItem.appendChild(reserveListItemImage)
-                reserveListItem.appendChild(reserveListItemInfoContainer)
-                reserveListItemInfoContainer.appendChild(reserveListItemText)
-                reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
-                moveButtonReserve(reserveListItemInfoContainer)
-                let promotedPokemon = reserveList.querySelector('div')
-                let promotedPokemonName = promotedPokemon.querySelector('div > p')
-                let promotedPokemonImage = promotedPokemon.querySelector('img')
-                memberName.innerText = promotedPokemonName.innerText
-                memberImage.src = promotedPokemonImage.src
-                removeButtonsAbilities(memberAbilities, buttonContainer2)
-                moveButton(buttonContainer2)
-                addAbilityFromReserve(datalist, memberAbilities, promotedPokemonName)
-                promotedPokemon.remove()
+            buttonBench.addEventListener('click', () =>{
+              let reserveListItem = document.createElement('div')
+              reserveList.appendChild(reserveListItem)
+              let reserveListItemImage = document.createElement('img')
+              reserveListItemImage.src = memberImage.src
+              let reserveListItemInfoContainer = document.createElement('div')
+              let reserveListItemText = document.createElement('p')
+              reserveListItemText.innerText = memberName.innerText
+              let reserveListItemRemoveButton = document.createElement('button')
+              reserveListItemRemoveButton.addEventListener('click', () => {
+                reserveListItem.remove()
               })
-              memberName.innerText = listItemText.innerText
-              memberImage.src = listItemImage.src
-              buttonRemove.innerText = 'Remove'
-              buttonContainer.appendChild(buttonRemove)
-              buttonBench.innerText = 'Bench'
-              buttonContainer.appendChild(buttonBench)
+              reserveListItemRemoveButton.innerText = 'Remove'
+              reserveListItem.appendChild(reserveListItemImage)
+              reserveListItem.appendChild(reserveListItemInfoContainer)
+              reserveListItemInfoContainer.appendChild(reserveListItemText)
+              reserveListItemInfoContainer.appendChild(reserveListItemRemoveButton)
+              moveButtonReserve(reserveListItemInfoContainer)
+              let promotedPokemon = reserveList.querySelector('div')
+              let promotedPokemonName = promotedPokemon.querySelector('div > p')
+              let promotedPokemonImage = promotedPokemon.querySelector('img')
+              memberName.innerText = promotedPokemonName.innerText
+              memberImage.src = promotedPokemonImage.src
+              removeButtonsAbilities(memberAbilities, buttonContainer2)
               moveButton(buttonContainer2)
+              addAbilityFromReserve(datalist, memberAbilities, promotedPokemonImage)
+              promotedPokemon.remove()
+            })
+            memberName.innerText = listItemText.innerText
+            memberImage.src = listItemImage.src
+            buttonRemove.innerText = 'Remove'
+            buttonContainer.appendChild(buttonRemove)
+            buttonBench.innerText = 'Bench'
+            buttonContainer.appendChild(buttonBench)
+            moveButton(buttonContainer2)
           }
           else {
             listItem.appendChild(listItemImage)

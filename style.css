@@ -149,6 +149,10 @@ body{
     flex-direction: column;
   }
 
+  #list > .nicknameprompt > p{
+    text-align: center;
+  }
+
   #list > .nicknameprompt > div{
     display: flex;
     flex-direction: row;
